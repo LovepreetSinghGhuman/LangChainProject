@@ -10,7 +10,7 @@ with open("groq_config.json", "r") as f:
 api_key = config["groq_api_key"]
 
 llm = ChatGroq(
-    model="llama-3.3-70b-versitile",
+    model="openai/gpt-oss-120b",
     temperature=0.7,
     api_key=api_key
 )
