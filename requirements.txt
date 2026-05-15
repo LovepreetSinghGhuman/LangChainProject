@@ -13,6 +13,9 @@ langchain-huggingface   # Hugging Face integration for LangChain
 openai                   # OpenAI API client
 transformers             # Hugging Face Transformers (models, pipelines)
 protobuf                 # Protocol Buffers (required by transformers)
+sentencepiece            # Required for Pegasus and some Hugging Face models
+accelerate               # Transformers performance and device management
+scipy                    # Common dependency for transformers pipelines
 
 # =============================
 # PyTorch & Audio/Visual
