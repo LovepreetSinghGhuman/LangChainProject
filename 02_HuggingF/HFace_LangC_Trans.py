@@ -1,3 +1,4 @@
+from langchain.prompts import PromptTemplate
 from transformers import pipeline
 from langchain import HuggingFacePipeline
 import torch
@@ -5,6 +6,7 @@ import torch
 print("PyTorch version:", torch.__version__)
 print("CUDA/Rocm available:", torch.cuda.is_available())
 print("GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "No GPU available")
+
 
 model_fb = pipeline(
     task="summarization", 
@@ -43,3 +45,12 @@ In its earliest versions, LangChain was organized around a concept called chains
 
 print(response)
 
+llm = HuggingFacePipeline(pipeline=model_google)
+
+template = PromptTemplate.from_template("Summarize the following article in 1 concise sentence:\n\n{article}\n\nSummary:")
+
+chain = template | llm
+topic = input("Enter the article to summarize: ")
+
+response_google = chain.invoke({"article": topic})
+print("Google PEGASUS Summary:", response_google)
