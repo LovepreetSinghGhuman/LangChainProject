@@ -5,7 +5,7 @@
 
 from langchain.prompts import PromptTemplate
 from transformers import pipeline, logging as hf_logging
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain_huggingface import HuggingFacePipeline
 import torch
 
 # =============================
@@ -27,24 +27,25 @@ def print_torch_info():
 # =============================
 # Main Summarization Logic
 # =============================
+
+def chunk_text(text, max_words=400):
+    words = text.split()
+    return [' '.join(words[i:i+max_words]) for i in range(0, len(words), max_words)]
+
 def main():
     print_torch_info()
 
     # --- Model pipelines ---
-
     model_fb = pipeline(
         task="summarization", 
         model="facebook/bart-large-cnn",
-        progress_bar=False
     )
-
 
     model_google = pipeline(
         task="summarization",
         model="google/pegasus-xsum",  # A robust summarization model
         tokenizer="google/pegasus-xsum",
         use_fast=False,
-        progress_bar=False
     )
 
     # --- Example summarization ---
@@ -73,7 +74,7 @@ def main():
     """
 
     print("\n--- Bart-Large-CNN Summary ---")
-    print(model_fb(example_article))
+    print(model_fb(example_article)[0]['summary_text'])
 
     # --- LangChain pipeline with Google Pegasus ---
     llm = HuggingFacePipeline(pipeline=model_google)
@@ -83,8 +84,16 @@ def main():
     chain = template | llm
 
     topic = input("\nEnter the article to summarize: ")
-    response_google = chain.invoke({"article": topic})
-    print("Google Summary:", response_google)
+    # Chunk input if too long
+    chunks = chunk_text(topic, max_words=400)
+    summaries = []
+    for chunk in chunks:
+        summaries.append(chain.invoke({"article": chunk}))
+    # If multiple chunks, join summaries; else, print single summary
+    if len(summaries) > 1:
+        print("Google Summary (chunked):", ' '.join(str(s) for s in summaries))
+    else:
+        print("Google Summary:", summaries[0])
 
 
 if __name__ == "__main__":
