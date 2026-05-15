@@ -1,12 +1,24 @@
 from transformers import pipeline
 from langchain import HuggingFacePipeline
+import torch
 
-model = pipeline(
+print("PyTorch version:", torch.__version__)
+print("CUDA/Rocm available:", torch.cuda.is_available())
+print("GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "No GPU available")
+
+model_fb = pipeline(
     task="summarization", 
     model="facebook/bart-large-cnn"
 )
 
-response = model("""LangChain: The Complete Guide to Building LLM-Powered Applications
+model_google = pipeline(
+    task="summarization",
+    model="google/pegasus-large",
+    max_length=60,
+    truncation=True,
+)
+
+response = model_fb("""LangChain: The Complete Guide to Building LLM-Powered Applications
 A deep dive into the framework that changed how developers build with large language models
 
 Introduction
@@ -30,3 +42,4 @@ In its earliest versions, LangChain was organized around a concept called chains
 )
 
 print(response)
+
