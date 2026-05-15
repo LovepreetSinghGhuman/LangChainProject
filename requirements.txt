@@ -1,0 +1,12 @@
+# Core LangChain and integrations
+langchain
+langchain-community
+langchain-groq
+openai
+langchain-huggingface
+transformers
+torch
+torchvision
+torchaudio
+# For PyTorch ROCm 7.2.1, install with the following command (do NOT add to requirements.txt):
+# pip install torch==2.2.2+rocm7.2.1 torchvision==0.17.2+rocm7.2.1 torchaudio==2.2.2+rocm7.2.1 --index-url https://download.pytorch.org/whl/rocm7.2.1
