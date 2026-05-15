@@ -8,6 +8,7 @@ path = "configs/"
 # Load API key from JSON file
 with open(path + "config.json", "r") as f:
     config = json.load(f)
+
 api_key = config["groq_api_key"]
 
 llm = ChatGroq(
