@@ -1,4 +1,0 @@
-langchain
-openai
-langchain-groq
-huggingface_hub
