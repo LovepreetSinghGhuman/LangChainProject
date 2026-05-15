@@ -1,26 +1,44 @@
+
+# =============================
+# Imports
+# =============================
 from langchain.prompts import PromptTemplate
 from transformers import pipeline
-from langchain import HuggingFacePipeline
+from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 import torch
 
-print("PyTorch version:", torch.__version__)
-print("CUDA/Rocm available:", torch.cuda.is_available())
-print("GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "No GPU available")
+
+# =============================
+# Utility Functions
+# =============================
+def print_torch_info():
+    print("PyTorch version:", torch.__version__)
+    print("CUDA/Rocm available:", torch.cuda.is_available())
+    print("GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "No GPU available")
 
 
-model_fb = pipeline(
-    task="summarization", 
-    model="facebook/bart-large-cnn"
-)
+# =============================
+# Main Summarization Logic
+# =============================
+def main():
+    print_torch_info()
 
-model_google = pipeline(
-    task="summarization",
-    model="google/pegasus-large",
-    max_length=60,
-    truncation=True,
-)
+    # --- Model pipelines ---
+    model_fb = pipeline(
+        task="summarization", 
+        model="facebook/bart-large-cnn"
+    )
 
-response = model_fb("""LangChain: The Complete Guide to Building LLM-Powered Applications
+    model_google = pipeline(
+        task="summarization",
+        model="google/pegasus-xsum",  # A robust summarization model
+        tokenizer="google/pegasus-xsum",
+        use_fast=False
+    )
+
+    # --- Example summarization ---
+    example_article = """
+LangChain: The Complete Guide to Building LLM-Powered Applications
 A deep dive into the framework that changed how developers build with large language models
 
 Introduction
@@ -40,17 +58,23 @@ The core insight behind LangChain is that most LLM applications share the same s
 
 The Architecture: From Chains to LCEL
 The Original Chain Model
-In its earliest versions, LangChain was organized around a concept called chains — classes that encapsulated a sequence of operations. You'd instantiate an LLMChain with a prompt and a model, or a SequentialChain that fed the output of one chain into the next. This worked, but the class hierarchy became increasingly unwieldy. Every new use case spawned a new chain class, and the codebase ballooned accordingly."""
-)
+In its earliest versions, LangChain was organized around a concept called chains — classes that encapsulated a sequence of operations. You'd instantiate an LLMChain with a prompt and a model, or a SequentialChain that fed the output of one chain into the next. This worked, but the class hierarchy became increasingly unwieldy. Every new use case spawned a new chain class, and the codebase ballooned accordingly.
+"""
 
-print(response)
+    print("\n--- Bart-Large-CNN Summary ---")
+    print(model_fb(example_article))
 
-llm = HuggingFacePipeline(pipeline=model_google)
+    # --- LangChain pipeline with Google Pegasus ---
+    llm = HuggingFacePipeline(pipeline=model_google)
+    template = PromptTemplate.from_template(
+        "Summarize the following article in 1 concise sentence:\n\n{article}\n\nSummary:"
+    )
+    chain = template | llm
 
-template = PromptTemplate.from_template("Summarize the following article in 1 concise sentence:\n\n{article}\n\nSummary:")
+    topic = input("\nEnter the article to summarize: ")
+    response_google = chain.invoke({"article": topic})
+    print("Google Summary:", response_google)
 
-chain = template | llm
-topic = input("Enter the article to summarize: ")
 
-response_google = chain.invoke({"article": topic})
-print("Google PEGASUS Summary:", response_google)
+if __name__ == "__main__":
+    main()
