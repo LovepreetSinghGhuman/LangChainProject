@@ -1,0 +1,72 @@
+# Dependencies for the LangChain summarization examples.
+# Install with:
+#   pip install -r config/requirements.txt
+#
+# This file currently combines general Python packages with Windows ROCm
+# wheels. Use the ROCm URLs only with Python 3.12 and compatible AMD hardware.
+
+# =============================
+# LangChain Core & Integrations
+# =============================
+langchain                # Main LangChain framework
+langchain-core
+langchain-community
+langchain-chroma
+langchain-text-splitters
+langchain-huggingface
+
+# =============================
+# Model and NLP libraries
+# =============================
+transformers             # Hugging Face Transformers (models, pipelines)
+protobuf                 # Protocol Buffers (required by transformers)
+sentencepiece            # Required for Pegasus and some Hugging Face models
+accelerate               # Transformers performance and device management
+scipy                    # Common dependency for transformers pipelines
+sentence-transformers
+chromadb
+transformers<5.9.0
+accelerate
+
+# =============================
+# PyTorch and optional audio/vision packages
+# =============================
+# torch                    # PyTorch (CPU version by default)
+# torchvision              # PyTorch vision utilities
+# torchaudio               # PyTorch audio utilities
+
+# ── Environment configuration ───────────────────────────
+python-dotenv
+
+# ROCm-specific dependencies for local Hugging Face inference
+#
+# These packages install a ROCm-enabled PyTorch stack for Windows on AMD GPUs.
+# They are intended for:
+# - Python 3.12
+# - AMD Radeon hardware (for example, RX 7900 XT)
+# - ROCm 7.2.1-compatible builds
+#
+# Note:
+# - These URLs are platform-specific and should only be used on Windows.
+# - Use this file instead of the standard CPU-only requirements when you
+#   want ROCm acceleration for PyTorch-based workloads.
+
+# ── ROCm SDK / runtime packages ────────────────────────
+# Core ROCm SDK components required by the Windows wheels.
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_core-7.2.1-py3-none-win_amd64.whl
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_devel-7.2.1-py3-none-win_amd64.whl
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_libraries_custom-7.2.1-py3-none-win_amd64.whl
+
+# ── ROCm package archive ────────────────────────────────
+# Archive for the ROCm release bundle.
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz
+
+# ── PyTorch stack for ROCm 7.2.1 ────────────────────────
+# ROCm-enabled PyTorch, torchaudio, and torchvision builds.
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torch-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchaudio-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl
+https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchvision-0.24.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl
+
+
+# ── Additional dependencies ────────────────────────
+pypdf
